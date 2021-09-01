@@ -1,0 +1,58 @@
+package file;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/downloadAction")
+public class downloadAction extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String fileName = request.getParameter("file"); // 사용자가 요청한 파일 이름(저장된 이름) 으로 가져옴
+		
+		String directory = "C:/web_workspace/BBS/upload"; // 실제 서버의 물리적 경로에 있는 업로드 폴더에 있는 파일을 다운받도록 함
+		File file = new File(directory + "/" + fileName);
+		
+		String mimeType = getServletContext().getMimeType(file.toString()); // 어떠한 데이터를 주고 받을지에 대한 정보를 담음
+		if(mimeType == null) {
+			response.setContentType("application/octet-stream"); // 응답할 정보, 본인이 받는 데이터 파일 정보를 알려줌
+		}
+		
+		String downloadName = null;
+		if (request.getHeader("user-agent").indexOf("MSIE") == -1) { // 인터넷 익스플로러로 접속한 사람이 아니라면
+			downloadName = new String(fileName.getBytes("UTF-8"), "8859_1");
+		} else {
+			downloadName = new String(fileName.getBytes("EUC-KR"), "8859_1");
+		}
+		
+		response.setHeader("Content-Disposition", "attachment;filename=\"" + downloadName + "\";");
+		
+		
+		FileInputStream fileInputStream = new FileInputStream(file);
+		ServletOutputStream servletOutputStream = response.getOutputStream();
+		
+		byte b[] = new byte[1024]; // 1024 바이트 단위로 쪼개서 전송
+		int data = 0;
+		
+		
+		while((data = (fileInputStream.read(b, 0, b.length))) != -1) {
+			servletOutputStream.write(b, 0, data);
+		}
+		
+		new FileDAO.hit(fileName);
+		
+		servletOutputStream.flush(); // 남은 데이터 전부 전송
+		servletOutputStream.close();
+		fileInputStream.close();
+		
+	}
+
+}

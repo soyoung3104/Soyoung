@@ -1,0 +1,11 @@
+package file;
+
+import com.mysql.jdbc.Connection;
+
+public class FileDAO {
+	
+	private Connection conn;
+	
+	
+
+}

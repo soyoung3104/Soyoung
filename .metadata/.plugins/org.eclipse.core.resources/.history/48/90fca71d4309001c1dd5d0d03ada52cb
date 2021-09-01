@@ -1,0 +1,16 @@
+<%@ page import="file.FileDAO" %>
+<%@ page import="java.io.File" %>
+<%@ page import="com.oreilly.servlet.multiport.DefaultFileRenamePolicy" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<link rel="stylesheet" href="css/custom.css">
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+	<title>JSP 파일 업로드</title>
+</head>
+<body>
+	
+</body>
+</html>
